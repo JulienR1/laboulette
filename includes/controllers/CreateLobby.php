@@ -7,15 +7,15 @@ class CreateLobby extends Controller
     public static function Build()
     {
         self::$buildError = self::BuildLobbyIfCreated();
-        $buildSuccess = self::$buildError === Errors::NO_ERROR;
-        if ($buildSuccess) {
+        if (self::$buildError === Errors::NO_ERROR) {
             exit;
         }
 
+        self::SetFiles();
         parent::CreateView("newLobby");
     }
 
-    public static function setFiles()
+    private static function SetFiles()
     {
         // cssFiles
         // jsFiles
@@ -27,7 +27,7 @@ class CreateLobby extends Controller
         if (isset($_POST["create-btn"])) {
             return self::BuildLobbyIfValid();
         }
-        return Errors::NOT_CREATED;
+        return Errors::FORM_NOT_SENT;
     }
 
     private static function BuildLobbyIfValid()

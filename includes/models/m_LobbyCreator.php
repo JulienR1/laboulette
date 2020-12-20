@@ -21,8 +21,8 @@ class m_LobbyCreator extends DatabaseHandler
 
     public static function AddHost($hostName, $lobbyId)
     {
-        $sql = "INSERT INTO players (id, username, lobbyId, isHost)
-                VALUES (NULL, ?, ?, TRUE)";
+        $sql = "INSERT INTO players (id, username, lobbyId, isHost, connected)
+                VALUES (NULL, ?, ?, TRUE, TRUE)";
         parent::query($sql, $hostName, $lobbyId);
 
         $idSql = "SELECT * FROM players WHERE username=? AND lobbyId=?";

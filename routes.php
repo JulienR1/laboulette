@@ -15,8 +15,7 @@ Route::set("new", function () {
 });
 
 Route::set("join", function () {
-    echo "joining game";
-    echo $_GET["id"];
+    JoinLobby::Build();
 });
 
 Route::set("pageNotFound", function () {
