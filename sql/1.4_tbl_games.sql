@@ -1,0 +1,10 @@
+CREATE TABLE `games`(
+`id` INT NOT NULL AUTO_INCREMENT,
+`lobbyId` INT NOT NULL,
+`roundNo` INT NOT NULL,
+`teamIdToPlay` INT NOT NULL,
+`roundTimer` INT NOT NULL DEFAULT 60,
+`startTime` DATETIME NOT NULL DEFAULT NOW(),
+PRIMARY KEY(`id`),
+FOREIGN KEY(`lobbyId`) REFERENCES lobbies(`id`)
+)

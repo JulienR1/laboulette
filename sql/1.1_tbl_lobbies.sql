@@ -1,0 +1,9 @@
+CREATE TABLE `lobbies`
+(
+`id` INT NOT NULL AUTO_INCREMENT,
+`hash` CHAR
+(8) NOT NULL,
+`password` TINYTEXT NOT NULL,
+PRIMARY KEY
+(`id`)
+)

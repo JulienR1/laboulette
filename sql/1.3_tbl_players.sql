@@ -1,0 +1,12 @@
+CREATE TABLE `players`
+(
+`id` INT NOT NULL AUTO_INCREMENT,
+`username` TINYTEXT NOT NULL,
+`lobbyId` INT NOT NULL,
+`isHost` BOOLEAN NOT NULL DEFAULT FALSE,
+PRIMARY KEY
+(`id`),
+FOREIGN KEY
+(`lobbyId`) REFERENCES lobbies
+(`id`)
+)
