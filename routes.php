@@ -2,14 +2,16 @@
 
 Route::set("index.php", function () {
     if (isset($_GET["id"])) {
-        echo "playing game " . $_GET["id"];
+        session_start();
+        echo "playing game " . $_GET["id"] . "<br>";
+        print_r($_SESSION);
     } else {
         echo "default page";
     }
 });
 
 Route::set("new", function () {
-    echo "Creating new lobby";
+    CreateLobby::Build();
 });
 
 Route::set("join", function () {

@@ -4,6 +4,7 @@ CREATE TABLE `lobbies`
 `hash` CHAR
 (8) NOT NULL,
 `password` TINYTEXT NOT NULL,
+`minWords` INT NOT NULL DEFAULT 10,
 PRIMARY KEY
 (`id`)
 )

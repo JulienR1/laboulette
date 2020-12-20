@@ -15,3 +15,4 @@ foreach (static::$cssFiles as $file) {
 </head>
 
 <body>
+    <main>
