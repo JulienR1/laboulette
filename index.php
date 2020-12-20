@@ -7,6 +7,7 @@ function __autoload($class_name)
     autoloadFile("includes/classes/$class_name.php");
     autoloadFile("includes/controllers/$class_name.php");
     autoloadFile("includes/models/$class_name.php");
+    autoloadFile("includes/game/$class_name.php");
 }
 
 function autoloadFile($path)

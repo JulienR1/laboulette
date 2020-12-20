@@ -18,6 +18,10 @@ Route::set("join", function () {
     JoinLobby::Build();
 });
 
+Route::set("game", function () {
+    Game::Dispatch();
+});
+
 Route::set("pageNotFound", function () {
     echo "404: page not found redirect";
 });
