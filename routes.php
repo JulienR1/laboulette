@@ -2,8 +2,13 @@
 
 Route::set("index.php", function () {
     session_start();
-    if (isset($_GET["id"]) && isset($_SESSION["userId"])) {
-        GameWindow::Build();
+    if (isset($_GET["id"])) {
+        if (isset($_SESSION["userId"])) {
+            GameWindow::Build();
+        } else {
+            header("Location: /");
+            exit;
+        }
     } else {
         echo "default page";
     }

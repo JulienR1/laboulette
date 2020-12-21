@@ -25,6 +25,8 @@ class m_LobbyCreator extends DatabaseHandler
                 VALUES (NULL, ?, ?, TRUE, TRUE)";
         parent::query($sql, $hostName, $lobbyId);
 
+        parent::query(Settings::UPDATE_SQL, $lobbyId);
+
         $idSql = "SELECT * FROM players WHERE username=? AND lobbyId=?";
         return parent::query($idSql, $hostName, $lobbyId);
     }

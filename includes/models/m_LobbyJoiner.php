@@ -21,6 +21,8 @@ class m_LobbyJoiner extends DatabaseHandler
                 VALUES (NULL, ?, ?, FALSE, TRUE)";
         parent::query($sql, $playerName, $lobbyId);
 
+        parent::query(Settings::UPDATE_SQL, $lobbyId);
+
         $playerInfoSql = "SELECT * FROM players WHERE username=? AND lobbyId=?";
         return parent::query($playerInfoSql, $playerName, $lobbyId);
     }

@@ -12,6 +12,9 @@ class Game extends Controller
                 case "disconnect":
                     self::Disconnect();
                     break;
+                case "build":
+                    GameWindow::BuildGame();
+                    break;
             }
         }
     }
@@ -24,7 +27,7 @@ class Game extends Controller
         session_destroy();
 
         $model = new m_Game();
-        $model->DisconnectPlayer($userId);
+        $model->DisconnectPlayer($userId, $lobbyId);
         if ($isHost) {
             $model->AssignHost($lobbyId);
         }
