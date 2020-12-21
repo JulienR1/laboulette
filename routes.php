@@ -1,10 +1,9 @@
 <?php
 
 Route::set("index.php", function () {
-    if (isset($_GET["id"])) {
-        session_start();
-        echo "playing game " . $_GET["id"] . "<br>";
-        print_r($_SESSION);
+    session_start();
+    if (isset($_GET["id"]) && isset($_SESSION["userId"])) {
+        GameWindow::Build();
     } else {
         echo "default page";
     }

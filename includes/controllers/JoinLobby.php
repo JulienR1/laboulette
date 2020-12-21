@@ -45,6 +45,7 @@ class JoinLobby extends Controller
                                 $_SESSION["userId"] = $playerInfo["id"];
                                 $_SESSION["username"] = $playerInfo["username"];
                                 $_SESSION["isHost"] = $playerInfo["isHost"];
+                                $_SESSION["lobbyId"] = $lobbyData["id"];
 
                                 header("Location: /?id=" . $hash);
                             } else {

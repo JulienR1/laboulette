@@ -62,6 +62,7 @@ class CreateLobby extends Controller
         $_SESSION["userId"] = $userData["id"];
         $_SESSION["username"] = $userData["username"];
         $_SESSION["isHost"] = $userData["isHost"];
+        $_SESSION["lobbyId"] = $lobbyId;
 
         header("Location: /?id=" . $hash);
     }
