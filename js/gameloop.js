@@ -3,20 +3,17 @@ document.addEventListener("DOMContentLoaded", start);
 let gameover = false;
 let refreshTime = 1000;
 
-let mainContainer = null;
+const CONTAINERS = ["connectedPlayers", "wordStats"];
 
-function start(){
-    mainContainer = document.querySelector("main");
+function start(){    
     loop();
 }
 
 function loop(){
-    console.log("loop");
-
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function(){
-        if(this.readyState == 4 && this.status == 200){
-            mainContainer.innerHTML = xhttp.responseText;            
+        if(this.readyState == 4 && this.status == 200){            
+            buildPage(JSON.parse(xhttp.responseText));            
         }
     };
     xhttp.open("GET","game/build", true);
@@ -29,4 +26,12 @@ function loop(){
     setTimeout(() => {
         loop();
     }, refreshTime);
+}
+
+function buildPage(content){
+    CONTAINERS.forEach((container)=>{
+        if(content[container] !== undefined){
+            document.getElementById(container).innerHTML = content[container];
+        }
+    });
 }

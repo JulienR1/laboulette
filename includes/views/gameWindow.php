@@ -1,5 +1,7 @@
 game window<br>
 
-<?php
-print_r($_SESSION);
-?>
+<div id="connectedPlayers"></div>
+
+<div id="wordStats"></div>
+
+<div id="wordForm"></div>

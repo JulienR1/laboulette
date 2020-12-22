@@ -10,7 +10,9 @@ Route::set("index.php", function () {
             exit;
         }
     } else {
-        echo "default page";
+        echo "default page<br>";
+        echo "<a href='join'>Join</a><br>";
+        echo "<a href='new'>New</a>";
     }
 });
 

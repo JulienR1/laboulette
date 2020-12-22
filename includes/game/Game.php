@@ -15,6 +15,10 @@ class Game extends Controller
                 case "build":
                     GameWindow::BuildGame();
                     break;
+                case "newWord":
+                    $saveError = WordManager::RecordWord();
+                    echo $saveError;
+                    break;
             }
         }
     }

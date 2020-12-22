@@ -10,4 +10,5 @@ abstract class Errors
     const INVALID_LOBBY = 5;
     const INVALID_PASSWORD = 6;
     const USER_ALREADY_REGISTERED = 7;
+    const DOUBLE_DATA = 8;
 }

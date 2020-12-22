@@ -5,6 +5,7 @@ CREATE TABLE `games`(
 `teamIdToPlay` INT NOT NULL,
 `roundTimer` INT NOT NULL DEFAULT 60,
 `startTime` DATETIME NOT NULL DEFAULT NOW(),
+`gameOver` BOOLEAN NOT NULL DEFAULT FALSE,
 PRIMARY KEY(`id`),
 FOREIGN KEY(`lobbyId`) REFERENCES lobbies(`id`)
 )
