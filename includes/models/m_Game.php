@@ -32,6 +32,11 @@ class m_Game extends DatabaseHandler
         return parent::query($sql, $lobbyId);
     }
 
+    public function GetGameSettings($lobbyId)
+    {
+        return null;
+    }
+
     public function DisconnectPlayer($playerId, $lobbyId)
     {
         $sql = "UPDATE players SET connected=FALSE, isHost=FALSE WHERE id=?";

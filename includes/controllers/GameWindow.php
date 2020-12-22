@@ -11,14 +11,24 @@ class GameWindow extends Controller
     {
         parent::$jsFiles[] = "gameloop.js";
         parent::$jsFiles[] = "wordForm.js";
+        parent::$jsFiles[] = "settingsForm.js";
         parent::$jsFiles[] = "disconnect.js";
         parent::CreateView("gameWindow");
+
+        $_SESSION["lastUpdateTime"] = null;
+        $_SESSION["lobbyData"] = array();
     }
 
     public static function BuildGame()
     {
         self::$lobbyData = isset($_SESSION["lobbyData"]) ? $_SESSION["lobbyData"] : array();
         self::$model = new m_Game();
+
+        $updatePlayers = false;
+        $updateWordStats = false;
+        $updateGameSettings = false;
+
+        $lobbyId = $_SESSION["lobbyId"];
 
         if (self::UpdatesWereMade()) {
             if (self::IsInGame()) {
@@ -31,12 +41,14 @@ class GameWindow extends Controller
             } else {
                 // -- pour TOUS:
                 // ---- afficher joueurs connectes
-                self::$lobbyData["connectedPlayers"] = self::$model->GetConnectedPlayers($_SESSION["lobbyId"]);
+                $updatePlayers = self::DetermineIfNeedsUpdate("connectedPlayers", self::$model->GetConnectedPlayers($lobbyId));
                 // ---- afficher nb de mots ajoutes
-                self::$lobbyData["wordStats"] = self::$model->GetWordStats($_SESSION["lobbyId"])[0];
+                $updateWordStats = self::DetermineIfNeedsUpdate("wordStats", self::$model->GetWordStats($lobbyId)[0]);
 
                 // ---- afficher formulaire pour ajouter des mots
                 // ---- voir settings de la partie
+                $updateGameSettings = true; //self::DetermineIfNeedsUpdate("gameSettings", self::$model->GetGameSettings($lobbyId)[0]);
+
                 // ---- message qui dit quil faut attendre apres le host
                 // -- pour HOST:
                 // ---- menu pour changer les settings de la partie
@@ -44,15 +56,27 @@ class GameWindow extends Controller
             }
         }
 
+        $updatedSections = array();
         if (sizeof(self::$lobbyData) > 0) {
+            if ($updatePlayers) {
+                $updatedSections["connectedPlayers"] = self::GetViewHTML("includes/gameviews/v_connectedPlayers.php");
+            }
+            if ($updateWordStats) {
+                $updatedSections["wordStats"] = self::GetViewHTML("includes/gameviews/v_wordStats.php");
+            }
 
-            $updatedSections = array();
-            $updatedSections["connectedPlayers"] = self::GetViewHTML("includes/game/v_connectedPlayers.php");
-            $updatedSections["wordStats"] = self::GetViewHTML("includes/game/v_wordStats.php");
-            echo json_encode($updatedSections);
+            if ($updateGameSettings) {
+                if ($_SESSION["isHost"]) {
+                    // TODO: check if new host
+                    $updatedSections["gameSettings"] = self::GetViewHTML("includes/gameviews/v_settingsFormHost.php");
+                } else {
+                    $updatedSections["gameSettings"] = self::GetViewHTML("includes/gameviews/v_settingsFormUser.php");
+                }
+            }
 
             $_SESSION["lobbyData"] = self::$lobbyData;
         }
+        return $updatedSections;
     }
 
     private static function UpdatesWereMade()
@@ -72,6 +96,13 @@ class GameWindow extends Controller
     {
         self::$gameData = self::$model->GetCurrentGame($_SESSION["lobbyId"]);
         return self::$gameData !== null;
+    }
+
+    private static function DetermineIfNeedsUpdate($sectionName, $latestData)
+    {
+        $previous = isset(self::$lobbyData[$sectionName]) ? self::$lobbyData[$sectionName] : array();
+        self::$lobbyData[$sectionName] = $latestData;
+        return self::$lobbyData[$sectionName] != $previous;
     }
 
     private static function GetViewHTML($file)

@@ -13,7 +13,8 @@ class Game extends Controller
                     self::Disconnect();
                     break;
                 case "build":
-                    GameWindow::BuildGame();
+                    $sectionsHTML = GameWindow::BuildGame();
+                    echo json_encode($sectionsHTML);
                     break;
                 case "newWord":
                     $saveError = WordManager::RecordWord();
