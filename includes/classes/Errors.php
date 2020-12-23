@@ -11,4 +11,5 @@ abstract class Errors
     const INVALID_PASSWORD = 6;
     const USER_ALREADY_REGISTERED = 7;
     const DOUBLE_DATA = 8;
+    const GAME_NOT_CREATED = 9;
 }

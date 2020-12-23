@@ -10,8 +10,15 @@ class m_Game extends DatabaseHandler
 
     public function GetCurrentGame($lobbyId)
     {
-        $sql = "SELECT * FROM games WHERE lobbyId=? AND gameOver=FALSE";
+        $sql = "SELECT * FROM games WHERE lobbyId=? ORDER BY startTime DESC LIMIT 1";
         return parent::query($sql, $lobbyId);
+    }
+
+    public function CreateGame($lobbyId)
+    {
+        $sql = "INSERT INTO games (id, lobbyId) VALUES (NULL, ?)";
+        parent::query($sql, $lobbyId);
+        parent::query(Settings::UPDATE_SQL, $lobbyId);
     }
 
     public function GetConnectedPlayers($lobbyId)
@@ -49,5 +56,11 @@ class m_Game extends DatabaseHandler
         $sql = "CALL AssignHost(?)";
         parent::query($sql, $lobbyId);
         parent::query(Settings::UPDATE_SQL, $lobbyId);
+    }
+
+    public function GetPlayerData($playerId)
+    {
+        $sql = "SELECT username, isHost FROM players WHERE id=?";
+        return parent::query($sql, $playerId);
     }
 }

@@ -9,7 +9,7 @@ function addWord(event){
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function(){
         if(this.readyState == 4 && this.status == 200){            
-            console.log(xhttp.responseText);
+            manageWordError(xhttp.responseText);
         }
     };
     xhttp.open("GET", "game/newWord?w=" + word);

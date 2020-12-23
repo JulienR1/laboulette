@@ -17,6 +17,8 @@ class GameWindow extends Controller
 
         $_SESSION["lastUpdateTime"] = null;
         $_SESSION["lobbyData"] = array();
+        $_SESSION["wasHost"] = false;
+        unset($_SESSION["gameId"]);
     }
 
     public static function BuildGame()
@@ -31,6 +33,9 @@ class GameWindow extends Controller
         $lobbyId = $_SESSION["lobbyId"];
 
         if (self::UpdatesWereMade()) {
+            self::DownloadPlayerData();
+            self::DownloadCurrentGameData($lobbyId);
+
             if (self::IsInGame()) {
                 // -- AVANT (HOST)
                 // ---- generation des equipes
@@ -39,6 +44,9 @@ class GameWindow extends Controller
                 // -- APRES
                 // ---- JEU!
             } else {
+                if (self::$gameData === null) {
+                    self::CreateGame($lobbyId);
+                }
                 // -- pour TOUS:
                 // ---- afficher joueurs connectes
                 $updatePlayers = self::DetermineIfNeedsUpdate("connectedPlayers", self::$model->GetConnectedPlayers($lobbyId));
@@ -67,8 +75,10 @@ class GameWindow extends Controller
 
             if ($updateGameSettings) {
                 if ($_SESSION["isHost"]) {
-                    // TODO: check if new host
-                    $updatedSections["gameSettings"] = self::GetViewHTML("includes/gameviews/v_settingsFormHost.php");
+                    if (!$_SESSION["wasHost"]) {
+                        $updatedSections["gameSettings"] = self::GetViewHTML("includes/gameviews/v_settingsFormHost.php");
+                    }
+                    $_SESSION["wasHost"] = true;
                 } else {
                     $updatedSections["gameSettings"] = self::GetViewHTML("includes/gameviews/v_settingsFormUser.php");
                 }
@@ -92,10 +102,41 @@ class GameWindow extends Controller
         return false;
     }
 
+    private static function DownloadCurrentGameData($lobbyId)
+    {
+        self::$gameData = self::$model->GetCurrentGame($lobbyId);
+        if (self::$gameData !== null) {
+            self::$gameData = self::$gameData[0];
+            $_SESSION["gameId"] = self::$gameData["id"];
+        }
+    }
+
+    private static function DownloadPlayerData()
+    {
+        $playerInfo = self::$model->GetPlayerData($_SESSION["userId"]);
+        if ($playerInfo !== null) {
+            $playerInfo = $playerInfo[0];
+            $_SESSION["username"] = $playerInfo["username"];
+            $_SESSION["isHost"] = $playerInfo["isHost"];
+        }
+    }
+
     private static function IsInGame()
     {
-        self::$gameData = self::$model->GetCurrentGame($_SESSION["lobbyId"]);
-        return self::$gameData !== null;
+        if (self::$gameData !== null) {
+            if (self::$gameData["lobbyId"] == $_SESSION["lobbyId"]) {
+                if (self::$gameData["gameState"] > 0) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static function CreateGame($lobbyId)
+    {
+        self::$model->CreateGame($lobbyId);
+        self::DownloadCurrentGameData($lobbyId);
     }
 
     private static function DetermineIfNeedsUpdate($sectionName, $latestData)

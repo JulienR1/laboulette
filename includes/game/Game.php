@@ -20,6 +20,10 @@ class Game extends Controller
                     $saveError = WordManager::RecordWord();
                     echo $saveError;
                     break;
+                case "updateSettings":
+                    $saveError = SettingsManager::RecordSettings();
+                    echo $saveError;
+                    break;
             }
         }
     }
