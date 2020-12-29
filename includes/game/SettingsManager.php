@@ -5,22 +5,26 @@ class SettingsManager
 
     public function RecordSettings()
     {
-        if (self::SettingsAreValid()) {
-            $data = self::GetSettings();
-            $data = self::SanitizeSettings($data);
-            $validationError = self::ValidateSettings($data);
-            if ($validationError === Errors::NO_ERROR) {
-                if (isset($_SESSION["gameId"])) {
-                    $model = new m_GameSettings();
-                    $model->UpdateGameSettings($data["timer"], $data["teamCount"], $_SESSION["gameId"], $_SESSION["lobbyId"]);
+        if ($_SESSION["isHost"]) {
+            if (self::SettingsAreValid()) {
+                $data = self::GetSettings();
+                $data = self::SanitizeSettings($data);
+                $validationError = self::ValidateSettings($data);
+                if ($validationError === Errors::NO_ERROR) {
+                    if (isset($_SESSION["gameId"])) {
+                        $model = new m_GameSettings();
+                        $model->UpdateGameSettings($data["timer"], $data["teamCount"], $_SESSION["gameId"], $_SESSION["lobbyId"]);
+                    } else {
+                        return Errors::GAME_NOT_CREATED;
+                    }
                 } else {
-                    return Errors::GAME_NOT_CREATED;
+                    return $validationError;
                 }
             } else {
-                return $validationError;
+                return Errors::EMPTY_FIELDS;
             }
         } else {
-            return Errors::EMPTY_FIELDS;
+            return Errors::UNAUTHORIZED_ACCESS;
         }
         return Errors::NO_ERROR;
     }

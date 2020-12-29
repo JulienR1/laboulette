@@ -24,6 +24,10 @@ class Game extends Controller
                     $saveError = SettingsManager::RecordSettings();
                     echo $saveError;
                     break;
+                case "beginTeamBuilding":
+                    $processError = TeamBuilder::LoadBuilder();
+                    echo $processError;
+                    break;
             }
         }
     }

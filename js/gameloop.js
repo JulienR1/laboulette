@@ -3,8 +3,6 @@ document.addEventListener("DOMContentLoaded", start);
 let gameover = false;
 let refreshTime = 1000;
 
-const CONTAINERS = ["connectedPlayers", "wordStats", "gameSettings", "startButton"];
-
 function start(){    
     loop();
 }
@@ -30,9 +28,9 @@ function loop(){
 }
 
 function buildPage(content){
-    CONTAINERS.forEach((container)=>{
+    for(container in content){     
         if(content[container] !== undefined){
             document.getElementById(container).innerHTML = content[container];            
         }
-    });
+    }
 }

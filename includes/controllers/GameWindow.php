@@ -13,6 +13,7 @@ class GameWindow extends Controller
         parent::$jsFiles[] = "wordForm.js";
         parent::$jsFiles[] = "settingsForm.js";
         parent::$jsFiles[] = "disconnect.js";
+        parent::$jsFiles[] = "teamBuilder.js";
         parent::CreateView("gameWindow");
 
         $_SESSION["lastUpdateTime"] = null;

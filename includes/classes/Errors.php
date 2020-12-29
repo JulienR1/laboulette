@@ -12,4 +12,7 @@ abstract class Errors
     const USER_ALREADY_REGISTERED = 7;
     const DOUBLE_DATA = 8;
     const GAME_NOT_CREATED = 9;
+    const UNAUTHORIZED_ACCESS = 10;
+    const GAME_STARTED = 11;
+    const GAME_NOT_PROPERLY_SET = 12;
 }
