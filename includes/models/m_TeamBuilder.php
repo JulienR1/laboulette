@@ -17,7 +17,7 @@ class m_TeamBuilder extends DatabaseHandler
 
     public function SetGameToTeamBuilding($lobbyId)
     {
-        $sql = "UPDATE games SET gameState = 1 WHERE lobbyId = ? AND gameState = 0";
+        $sql = "UPDATE games SET gameState = " . GameStates::TEAM_BUILDING . " WHERE lobbyId = ? AND gameState = " . GameStates::LOBBY;
         parent::query($sql, $lobbyId);
         parent::query(Settings::UPDATE_SQL, $lobbyId);
     }

@@ -8,7 +8,7 @@ class TeamBuilder
             $model = new m_Game();
             $gameData = $model->GetCurrentGame($_SESSION["lobbyId"]);
             if ($gameData !== null) {
-                if ($gameData[0]["gameState"] !== 0) {
+                if ($gameData[0]["gameState"] !== GameStates::LOBBY) {
                     $model = new m_TeamBuilder();
                     $gameIsValid = $model->GetGameSettingsValidation($_SESSION["lobbyId"])[0]["validGame"];
                     if ($gameIsValid) {

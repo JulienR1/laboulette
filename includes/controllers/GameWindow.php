@@ -19,6 +19,7 @@ class GameWindow extends Controller
         $_SESSION["lastUpdateTime"] = null;
         $_SESSION["lobbyData"] = array();
         $_SESSION["wasHost"] = false;
+        $_SESSION["lastGameState"] = GameStates::LOBBY;
         unset($_SESSION["gameId"]);
     }
 
@@ -31,57 +32,78 @@ class GameWindow extends Controller
         $updateWordStats = false;
         $updateGameSettings = false;
         $updateStartButton = false;
+        $updateTeams = false;
 
         $lobbyId = $_SESSION["lobbyId"];
+        $updatedSections = array();
 
         if (self::UpdatesWereMade()) {
             self::DownloadPlayerData();
             self::DownloadCurrentGameData($lobbyId);
 
-            if (self::IsInGame()) {
-                // -- AVANT (HOST)
-                // ---- generation des equipes
-                // ---- ecran pour faire les modifications des equipes
-                // ---- bouton pour go final
-                // -- APRES
-                // ---- JEU!
-            } else {
-                if (self::$gameData === null) {
-                    self::CreateGame($lobbyId);
-                }
-                $updatePlayers = self::DetermineIfNeedsUpdate("connectedPlayers", self::$model->GetConnectedPlayers($lobbyId));
-                $updateWordStats = self::DetermineIfNeedsUpdate("wordStats", self::$model->GetWordStats($lobbyId)[0]);
-                $updateGameSettings = self::DetermineIfNeedsUpdate("gameSettings", self::$model->GetGameSettings($lobbyId)[0]);
-                $updateStartButton = true;
+            $gameState = self::GetGameState();
+            switch ($gameState) {
+                case GameStates::LOBBY:
+                    if (self::$gameData === null) {
+                        self::CreateGame($lobbyId);
+                    }
+                    $updatePlayers = self::DetermineIfNeedsUpdate("connectedPlayers", self::$model->GetConnectedPlayers($lobbyId));
+                    $updateWordStats = self::DetermineIfNeedsUpdate("wordStats", self::$model->GetWordStats($lobbyId)[0]);
+                    $updateGameSettings = self::DetermineIfNeedsUpdate("gameSettings", self::$model->GetGameSettings($lobbyId)[0]);
+                    $updateStartButton = true;
+                    break;
+                case GameStates::TEAM_BUILDING:
+                    $updateTeams = true; // TODO: Change to logical verification of changes in DB
+                    // TODO: Bouton play final
+                    break;
+                case GameStates::IN_GAME:
+                    // ---- JEU!
+                    break;
+                case GameStates::ERROR:
+                    return;
             }
+
+            if ($gameState != $_SESSION["lastGameState"]) {
+                $updatedSections = self::ClearAllSections($updatedSections);
+            }
+            $_SESSION["lastGameState"] = $gameState;
         }
 
-        $updatedSections = array();
         if (sizeof(self::$lobbyData) > 0) {
             if ($updatePlayers) {
-                $updatedSections["connectedPlayers"] = self::GetViewHTML("includes/gameviews/v_connectedPlayers.php");
+                $updatedSections["connectedPlayers"] = self::GetViewHTML("includes/gameviews/all/v_connectedPlayers.php");
             }
             if ($updateWordStats) {
-                $updatedSections["wordStats"] = self::GetViewHTML("includes/gameviews/v_wordStats.php");
+                $updatedSections["wordStats"] = self::GetViewHTML("includes/gameviews/all/v_wordStats.php");
             }
 
             if ($updateGameSettings) {
                 if ($_SESSION["isHost"]) {
                     if (!$_SESSION["wasHost"]) {
-                        $updatedSections["gameSettings"] = self::GetViewHTML("includes/gameviews/v_settingsFormHost.php");
+                        $updatedSections["gameSettings"] = self::GetViewHTML("includes/gameviews/host/v_settingsEdition.php");
                     }
                 } else {
-                    $updatedSections["gameSettings"] = self::GetViewHTML("includes/gameviews/v_settingsFormUser.php");
+                    $updatedSections["gameSettings"] = self::GetViewHTML("includes/gameviews/guests/v_settings.php");
                 }
             }
 
             if ($updateStartButton) {
                 if ($_SESSION["isHost"]) {
                     if (!$_SESSION["wasHost"]) {
-                        $updatedSections["startButton"] = self::GetViewHTML("includes/gameviews/v_startGameButton.php");
+                        $updatedSections["startButton"] = self::GetViewHTML("includes/gameviews/host/v_startGameButton.php");
                     }
                 } else {
-                    $updatedSections["startButton"] = self::GetViewHTML("includes/gameviews/v_waitingForStart.php");
+                    $updatedSections["startButton"] = self::GetViewHTML("includes/gameviews/guests/v_waitingForStart.php");
+                }
+            }
+
+            if ($updateTeams) {
+                if ($_SESSION["isHost"]) {
+                    if (!$_SESSION["wasHost"] || true) {
+                        $updatedSections["teams"] = self::GetViewHTML("includes/gameviews/host/v_teamEdition.php");
+                    }
+                } else {
+                    $updatedSections["teams"] = self::GetViewHTML("includes/gameviews/guests/v_teams.php");
                 }
             }
 
@@ -126,16 +148,16 @@ class GameWindow extends Controller
         }
     }
 
-    private static function IsInGame()
+    private static function GetGameState()
     {
         if (self::$gameData !== null) {
             if (self::$gameData["lobbyId"] == $_SESSION["lobbyId"]) {
-                if (self::$gameData["gameState"] > 0) {
-                    return true;
-                }
+                return self::$gameData["gameState"];
             }
+        } else {
+            return GameStates::LOBBY;
         }
-        return false;
+        return GameStates::ERROR;
     }
 
     private static function CreateGame($lobbyId)
@@ -158,6 +180,16 @@ class GameWindow extends Controller
         $html = ob_get_contents();
         ob_end_clean();
         return $html;
+    }
+
+    private static function ClearAllSections($sectionsHtml)
+    {
+        $sectionsHtml["connectedPlayers"] = "";
+        $sectionsHtml["wordStats"] = "";
+        $sectionsHtml["wordForm"] = "";
+        $sectionsHtml["gameSettings"] = "";
+        $sectionsHtml["startButton"] = "";
+        return $sectionsHtml;
     }
 
 }
