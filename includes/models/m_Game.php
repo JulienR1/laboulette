@@ -41,7 +41,8 @@ class m_Game extends DatabaseHandler
 
     public function GetGameSettings($lobbyId)
     {
-        return null;
+        $sql = "SELECT roundTimer, teamCount FROM games WHERE lobbyId = ?";
+        return parent::query($sql, $lobbyId);
     }
 
     public function DisconnectPlayer($playerId, $lobbyId)

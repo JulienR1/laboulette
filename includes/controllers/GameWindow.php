@@ -29,6 +29,7 @@ class GameWindow extends Controller
         $updatePlayers = false;
         $updateWordStats = false;
         $updateGameSettings = false;
+        $updateStartButton = false;
 
         $lobbyId = $_SESSION["lobbyId"];
 
@@ -47,20 +48,10 @@ class GameWindow extends Controller
                 if (self::$gameData === null) {
                     self::CreateGame($lobbyId);
                 }
-                // -- pour TOUS:
-                // ---- afficher joueurs connectes
                 $updatePlayers = self::DetermineIfNeedsUpdate("connectedPlayers", self::$model->GetConnectedPlayers($lobbyId));
-                // ---- afficher nb de mots ajoutes
                 $updateWordStats = self::DetermineIfNeedsUpdate("wordStats", self::$model->GetWordStats($lobbyId)[0]);
-
-                // ---- afficher formulaire pour ajouter des mots
-                // ---- voir settings de la partie
-                $updateGameSettings = true; //self::DetermineIfNeedsUpdate("gameSettings", self::$model->GetGameSettings($lobbyId)[0]);
-
-                // ---- message qui dit quil faut attendre apres le host
-                // -- pour HOST:
-                // ---- menu pour changer les settings de la partie
-                // ---- bouton pour commencer la partie
+                $updateGameSettings = self::DetermineIfNeedsUpdate("gameSettings", self::$model->GetGameSettings($lobbyId)[0]);
+                $updateStartButton = true;
             }
         }
 
@@ -78,13 +69,26 @@ class GameWindow extends Controller
                     if (!$_SESSION["wasHost"]) {
                         $updatedSections["gameSettings"] = self::GetViewHTML("includes/gameviews/v_settingsFormHost.php");
                     }
-                    $_SESSION["wasHost"] = true;
                 } else {
                     $updatedSections["gameSettings"] = self::GetViewHTML("includes/gameviews/v_settingsFormUser.php");
                 }
             }
 
+            if ($updateStartButton) {
+                if ($_SESSION["isHost"]) {
+                    if (!$_SESSION["wasHost"]) {
+                        $updatedSections["startButton"] = self::GetViewHTML("includes/gameviews/v_startGameButton.php");
+                    }
+                } else {
+                    $updatedSections["startButton"] = self::GetViewHTML("includes/gameviews/v_waitingForStart.php");
+                }
+            }
+
             $_SESSION["lobbyData"] = self::$lobbyData;
+
+            if ($_SESSION["isHost"]) {
+                $_SESSION["wasHost"] = true;
+            }
         }
         return $updatedSections;
     }

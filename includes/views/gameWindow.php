@@ -1,4 +1,5 @@
 game window<br>
+localhost/join?id=<?php echo $_GET["id"]; ?><br>
 
 <div id="connectedPlayers"></div>
 
@@ -9,3 +10,5 @@ game window<br>
 </div>
 
 <div id="gameSettings"></div>
+
+<div id="startButton"></div>
