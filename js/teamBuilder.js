@@ -157,6 +157,7 @@ function onPlayerTouch(player){
     currentSelectedPlayer = player;
     let team = player.parentNode.parentNode;
     let teamId = team.getAttribute("teamId");
+    touchControlMenu.querySelector("span").innerHTML = player.innerHTML;
     touchControlMenu.querySelectorAll("li").forEach(teamSelector => {
         if(teamId === teamSelector.getAttribute("teamId")){
             teamSelector.setAttribute("inactive", "");
@@ -179,12 +180,14 @@ function onTeamSelection(e){
                 team.append(currentSelectedPlayer);
                 notifyTeamChanges();
             }
+            cancelTeamChange();
             return;            
         }
-    });
+    });    
 }
 
 function cancelTeamChange(){
+    touchControlMenu.querySelector("span").innerHTML = "NOM DU JOUEUR";
     touchControlMenu.setAttribute("disabled","");
     currentSelectedPlayer = null;
 }
