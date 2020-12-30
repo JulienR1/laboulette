@@ -28,6 +28,10 @@ class Game extends Controller
                     $processError = TeamBuilder::LoadBuilder();
                     echo $processError;
                     break;
+                case "updateTeams":
+                    $saveError = TeamBuilder::UpdateTeams();
+                    echo $saveError;
+                    break;
             }
         }
     }

@@ -22,4 +22,27 @@ class m_TeamBuilder extends DatabaseHandler
         parent::query(Settings::UPDATE_SQL, $lobbyId);
     }
 
+    public function ValidateTeams($gameId, $teamsIds)
+    {
+        $sql = "SELECT ValidateUpdatedTeams(?, ?) AS teamsAreValid";
+        return parent::query($sql, $gameId, $teamsIds);
+    }
+
+    public function ValidatePlayers($gameId, $playerIds)
+    {
+        $sql = "SELECT ValidateUpdatedPlayersInTeams(?, ?) AS playersAreValid";
+        return parent::query($sql, $gameId, $playerIds);
+    }
+
+    public function SetTeamForPlayers($gameId, $newTeamId, $playerIds)
+    {
+        $sql = "CALL SetTeamForPlayers(?, ?, ?)";
+        parent::query($sql, $gameId, $newTeamId, $playerIds);
+    }
+
+    public function RegisterUpdate($lobbyId)
+    {
+        parent::query(Settings::UPDATE_SQL, $lobbyId);
+    }
+
 }

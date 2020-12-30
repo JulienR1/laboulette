@@ -53,7 +53,7 @@ class GameWindow extends Controller
                     $updateStartButton = true;
                     break;
                 case GameStates::TEAM_BUILDING:
-                    $updateTeams = true; // TODO: Change to logical verification of changes in DB
+                    $updateTeams = self::DetermineIfNeedsUpdate("teams", self::$model->GetTeams(self::$gameData["id"]));
                     // TODO: Bouton play final
                     break;
                 case GameStates::IN_GAME:

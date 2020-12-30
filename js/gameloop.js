@@ -2,8 +2,10 @@ document.addEventListener("DOMContentLoaded", start);
 
 let gameover = false;
 let refreshTime = 1000;
+let potentialEvents;
 
 function start(){    
+    potentialEvents = {"teams":initTeamBuilder};
     loop();
 }
 
@@ -12,7 +14,9 @@ function loop(){
     xhttp.onreadystatechange = function(){
         if(this.readyState == 4 && this.status == 200){
             // console.log(xhttp.responseText);
-            buildPage(JSON.parse(xhttp.responseText));
+            var responseJSON = JSON.parse(xhttp.responseText);
+            buildPage(responseJSON);
+            callPotentialEvents(responseJSON);
         }
     };
     xhttp.open("GET","game/build", true);
@@ -31,6 +35,14 @@ function buildPage(content){
     for(container in content){     
         if(content[container] !== undefined){
             document.getElementById(container).innerHTML = content[container];            
+        }
+    }
+}
+
+function callPotentialEvents(content){
+    for(container in content){
+        if(container in potentialEvents){            
+            potentialEvents[container]();
         }
     }
 }

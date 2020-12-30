@@ -64,4 +64,16 @@ class m_Game extends DatabaseHandler
         $sql = "SELECT username, isHost FROM players WHERE id=?";
         return parent::query($sql, $playerId);
     }
+
+    public function GetTeams($gameId)
+    {
+        $sql = "SELECT A.id AS teamId, A.name, playerId, username
+                FROM (
+                    SELECT id, teams.name
+                    FROM teams
+                    WHERE gameId = ?) AS A
+                LEFT JOIN playerstoteams ON teamId = A.id
+                LEFT JOIN players ON players.id = playerId AND connected = TRUE";
+        return parent::query($sql, $gameId);
+    }
 }
