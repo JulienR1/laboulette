@@ -1,1 +1,1 @@
-<button onclick="loadTeamBuilder()">Commencer la partie</button>
+<button onclick="loadTeamBuilder()">Générer les équipes</button>

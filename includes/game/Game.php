@@ -32,6 +32,10 @@ class Game extends Controller
                     $saveError = TeamBuilder::UpdateTeams();
                     echo $saveError;
                     break;
+                case "start":
+                    $processError = GameManager::Start();
+                    echo $processError;
+                    break;
             }
         }
     }

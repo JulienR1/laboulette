@@ -15,4 +15,5 @@ abstract class Errors
     const UNAUTHORIZED_ACCESS = 10;
     const GAME_STARTED = 11;
     const GAME_NOT_PROPERLY_SET = 12;
+    const INVALID_TEAMS = 13;
 }

@@ -14,6 +14,7 @@ class GameWindow extends Controller
         parent::$jsFiles[] = "settingsForm.js";
         parent::$jsFiles[] = "disconnect.js";
         parent::$jsFiles[] = "teamBuilder.js";
+        parent::$jsFiles[] = "game.js";
         parent::CreateView("gameWindow");
 
         $_SESSION["lastUpdateTime"] = null;
@@ -33,6 +34,7 @@ class GameWindow extends Controller
         $updateGameSettings = false;
         $updateStartButton = false;
         $updateTeams = false;
+        $updatePlayButton = false;
 
         $lobbyId = $_SESSION["lobbyId"];
         $updatedSections = array();
@@ -42,6 +44,7 @@ class GameWindow extends Controller
             self::DownloadCurrentGameData($lobbyId);
 
             $gameState = self::GetGameState();
+
             switch ($gameState) {
                 case GameStates::LOBBY:
                     if (self::$gameData === null) {
@@ -54,7 +57,7 @@ class GameWindow extends Controller
                     break;
                 case GameStates::TEAM_BUILDING:
                     $updateTeams = self::DetermineIfNeedsUpdate("teams", self::$model->GetTeams(self::$gameData["id"]));
-                    // TODO: Bouton play final
+                    $updatePlayButton = true;
                     break;
                 case GameStates::IN_GAME:
                     // ---- JEU!
@@ -104,6 +107,16 @@ class GameWindow extends Controller
                     }
                 } else {
                     $updatedSections["teams"] = self::GetViewHTML("includes/gameviews/guests/v_teams.php");
+                }
+            }
+
+            if ($updatePlayButton) {
+                if ($_SESSION["isHost"]) {
+                    if (!$_SESSION["wasHost"]) {
+                        $updatedSections["startButton"] = self::GetViewHTML("includes/gameviews/host/v_playGameButton.php");
+                    }
+                } else {
+                    $updatedSections["startButton"] = self::GetViewHTML("includes/gameviews/guests/v_waitingForStart.php");
                 }
             }
 
@@ -189,6 +202,7 @@ class GameWindow extends Controller
         $sectionsHtml["wordForm"] = "";
         $sectionsHtml["gameSettings"] = "";
         $sectionsHtml["startButton"] = "";
+        $sectionsHtml["teams"] = "";
         return $sectionsHtml;
     }
 

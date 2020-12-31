@@ -1,0 +1,1 @@
+<button onclick="startGame()">Commencer la partie</button>
