@@ -6,6 +6,8 @@ class GameWindow extends Controller
     public static $lobbyData = array();
 
     private static $gameData = array();
+    private static $currentPlayer = null;
+    private static $currentGameMode = null;
 
     public static function Build()
     {
@@ -36,10 +38,20 @@ class GameWindow extends Controller
         $updateTeams = false;
         $updatePlayButton = false;
 
+        $updatePlayerLayout = false;
+        $updateGuessLayout = false;
+        $updateWaitLayout = false;
+
+        $updateTimer = false;
+
         $lobbyId = $_SESSION["lobbyId"];
         $updatedSections = array();
 
-        if (self::UpdatesWereMade()) {
+        $game = new m_GameManager();
+        $tempGameId = $game->GetGameId($lobbyId)[0]["id"];
+        $roundIsComplete = $game->GetRoundComplete($tempGameId)[0]["roundComplete"];
+
+        if (self::UpdatesWereMade() || $roundIsComplete) {
             self::DownloadPlayerData();
             self::DownloadCurrentGameData($lobbyId);
 
@@ -57,10 +69,31 @@ class GameWindow extends Controller
                     break;
                 case GameStates::TEAM_BUILDING:
                     $updateTeams = self::DetermineIfNeedsUpdate("teams", self::$model->GetTeams(self::$gameData["id"]));
+                    $_SESSION["teamId"] = self::$model->GetPlayerTeam($_SESSION["userId"], $_SESSION["gameId"])[0]["teamId"];
                     $updatePlayButton = true;
                     break;
                 case GameStates::IN_GAME:
-                    // ---- JEU!
+                    $gameId = $_SESSION["gameId"];
+                    self::$currentPlayer = $game->GetCurrentPlayer($gameId)[0];
+                    self::$currentGameMode = $game->GetGameMode($gameId)[0]["gameMode"];
+
+                    if (self::$currentGameMode === 5) {
+                        // game over
+                    }
+
+                    if (self::$currentPlayer["id"] === $_SESSION["userId"]) {
+                        $updatePlayerLayout = true;
+                        if ($roundIsComplete) {
+                            $game->SetNextTeamToPlay($gameId);
+                            $game->NextRound($gameId, $lobbyId);
+                        }
+                    } else if (self::$currentPlayer["teamId"] == $_SESSION["teamId"]) {
+                        $updateGuessLayout = true; // check if new word to guess (scored animation) (retaltime score update?)
+                    } else {
+                        $updateWaitLayout = true; // check if new word to not guess (scored animation) (realtime score update?)
+                    }
+
+                    $updateTimer = self::DetermineIfNeedsUpdate("timer", self::$gameData["roundEndTime"]);
                     break;
                 case GameStates::ERROR:
                     return;
@@ -118,6 +151,30 @@ class GameWindow extends Controller
                 } else {
                     $updatedSections["startButton"] = self::GetViewHTML("includes/gameviews/guests/v_waitingForStart.php");
                 }
+            }
+
+            if ($updatePlayerLayout) {
+                $updatedSections["extraInfos"] = "";
+                $updatedSections["controls"] = self::GetViewHTML("includes/gameviews/ingame/v_player.php");
+                if (isset($_SESSION["randomWord"]) && $_SESSION["randomWord"] !== null) {
+                    $updatedSections["word"] = self::GetViewHTML("includes/gameviews/ingame/v_word.php");
+                }
+            }
+
+            if ($updateGuessLayout) {
+                $updatedSections["extraInfos"] = self::GetViewHTML("includes/gameviews/ingame/v_guessers.php");
+                $updatedSections["controls"] = "";
+                $updatedSections["word"] = "";
+            }
+
+            if ($updateWaitLayout) {
+                $updatedSections["extraInfos"] = self::GetViewHTML("includes/gameviews/ingame/v_otherTeams.php");
+                $updatedSections["controls"] = "";
+                $updatedSections["word"] = "";
+            }
+
+            if ($updateTimer) {
+                $updatedSections["timer"] = self::GetViewHTML("includes/gameviews/ingame/v_timer.php");
             }
 
             $_SESSION["lobbyData"] = self::$lobbyData;

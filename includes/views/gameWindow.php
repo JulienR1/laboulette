@@ -1,7 +1,3 @@
-game window<br>
-localhost/join?id=<?php echo $_GET["id"]; ?><br>
-lobby id: <?php echo $_SESSION["lobbyId"]; ?><br>
-
 <div id="connectedPlayers"></div>
 
 <div id="wordStats"></div>
@@ -15,3 +11,12 @@ lobby id: <?php echo $_SESSION["lobbyId"]; ?><br>
 <div id="startButton"></div>
 
 <div id="teams"></div>
+
+<div id="gameLayout">
+    <div id="timer"></div>
+    <div id="prompts">
+        <div id="controls"></div>
+        <div id="word"></div>
+    </div>
+    <div id="extraInfos"></div>
+</div>

@@ -36,6 +36,14 @@ class Game extends Controller
                     $processError = GameManager::Start();
                     echo $processError;
                     break;
+                case "startTimer":
+                    $processError = GameManager::StartTimer();
+                    echo $processError;
+                    break;
+                case "requestWord":
+                    $errors = GameManager::RequestWord();
+                    echo $errors;
+                    break;
             }
         }
     }

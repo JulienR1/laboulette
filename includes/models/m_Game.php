@@ -76,4 +76,12 @@ class m_Game extends DatabaseHandler
                 LEFT JOIN players ON players.id = playerId AND connected = TRUE";
         return parent::query($sql, $gameId);
     }
+
+    public function GetPlayerTeam($playerId, $gameId)
+    {
+        $sql = "SELECT teamId FROM players
+                JOIN playerstoteams ON players.id = playerId AND playerId = ?
+                JOIN teams ON teams.id = teamId AND gameId = ?";
+        return parent::query($sql, $playerId, $gameId);
+    }
 }

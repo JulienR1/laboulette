@@ -5,7 +5,7 @@ class Controller
     public static $title;
     public static $cssFiles = array();
     public static $jsFiles = array();
-    public static $importFileVersion = 0;
+    public static $importFileVersion = 1;
 
     public static function CreateView($viewName)
     {
