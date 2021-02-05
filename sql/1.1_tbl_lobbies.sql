@@ -1,0 +1,12 @@
+CREATE TABLE `lobbies`
+(
+`id` INT NOT NULL AUTO_INCREMENT,
+`hash` CHAR
+(6) NOT NULL,
+`password` TINYTEXT NOT NULL,
+`lastModification` DATETIME NOT NULL DEFAULT NOW
+(),
+`minWords` INT NOT NULL DEFAULT 10,
+PRIMARY KEY
+(`id`)
+)

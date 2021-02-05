@@ -1,0 +1,12 @@
+CREATE TABLE `teams`
+(
+`id` INT NOT NULL AUTO_INCREMENT,
+`name` TINYTEXT NOT NULL,
+`gameId` INT NOT NULL,
+`priority` INT NOT NULL DEFAULT -1,
+PRIMARY KEY
+(`id`),
+FOREIGN KEY
+(`gameId`) REFERENCES games
+(`id`)
+)

@@ -1,0 +1,12 @@
+RewriteEngine On
+
+RewriteCond %{REQUEST_URI} ^/game [NC]
+RewriteCond %{REQUEST_URI} /[\w]+\.(php) [NC,OR]
+RewriteCond %{REQUEST_URI} /[^.]+/?$ [NC]
+RewriteCond %{REQUEST_URI} !game\.php [NC]
+RewriteRule ^(game)/([^/]+)$ index.php?url=$1&cmd=$2 [L,NC,QSA]
+
+RewriteCond %{REQUEST_FILENAME} !(\.(css|js)$)
+RewriteRule ^([^/]+)$ index.php?url=$1 [L,QSA]
+
+ErrorDocument 404 /pageNotFound

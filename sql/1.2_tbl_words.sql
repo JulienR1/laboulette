@@ -1,0 +1,11 @@
+CREATE TABLE `words`
+(
+`id` INT NOT NULL AUTO_INCREMENT,
+`word` TINYTEXT NOT NULL,
+`lobbyId` INT NOT NULL,
+PRIMARY KEY
+(`id`),
+FOREIGN KEY
+(`lobbyId`) REFERENCES lobbies
+(`id`)
+)
